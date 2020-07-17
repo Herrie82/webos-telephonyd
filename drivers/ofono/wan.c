@@ -102,7 +102,8 @@ static void free_used_instances(struct ofono_wan_data *od)
 
 static void current_service_autoconnect_set_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 {
-	struct cb_data *cbd = user_data;
+	g_message("Herrie current_service_autoconnect_set_cb");
+    struct cb_data *cbd = user_data;
 	struct ofono_wan_data *od = cbd->user;
 	wan_result_cb cb = cbd->cb;
 	struct wan_error werror;
@@ -131,6 +132,7 @@ cleanup:
 
 static void current_service_enabled_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 {
+    g_message("Herrie current_service_enabled_cb");
 	struct cb_data *cbd = user_data;
 	struct ofono_wan_data *od = cbd->user;
 	wan_result_cb cb = cbd->cb;
@@ -167,7 +169,8 @@ static void current_service_enabled_cb(GObject *source, GAsyncResult *res, gpoin
 static void switch_current_service_state(struct ofono_wan_data *od, bool enable,
 										 wan_result_cb cb, void *data)
 {
-	GDBusConnection *conn = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);
+	g_message("Herrie switch_current_service_state");
+    GDBusConnection *conn = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, NULL);
 
 	g_message("enable %d", enable);
 
@@ -181,6 +184,7 @@ static void context_prop_changed_cb(const char *name, void *data);
 
 static void get_contexts_cb(const struct ofono_error *error, GSList *contexts, void *data)
 {
+    g_message("Herrie get_contexts_cb");
 	struct cb_data *cbd = data;
 	wan_get_status_cb cb = cbd->cb;
 	struct ofono_wan_data *od = cbd->user;
@@ -252,6 +256,7 @@ static void get_contexts_cb(const struct ofono_error *error, GSList *contexts, v
 
 void ofono_wan_get_status(struct wan_service *service, wan_get_status_cb cb, void *data)
 {
+    g_message("Herrie ofono_wan_get_status");
 	struct ofono_wan_data *od = wan_service_get_data(service);
 	struct cb_data *cbd = NULL;
 
@@ -264,6 +269,7 @@ void ofono_wan_get_status(struct wan_service *service, wan_get_status_cb cb, voi
 
 static void roamguard_set_cb(const struct wan_error* error, void *data)
 {
+    g_message("Herrie roamguard_set_cb");
 	struct cb_data *cbd = data;
 	struct ofono_wan_data *od = cbd->user;
 	wan_result_cb cb = cbd->cb;
@@ -283,6 +289,7 @@ cleanup:
 
 static void disablewan_set_cb(struct ofono_error *error, void *data)
 {
+    g_message("Herrie disablewan_set_cb");
 	struct cb_data *cbd = data;
 	struct ofono_wan_data *od = cbd->user;
 	wan_result_cb cb = cbd->cb;
@@ -311,7 +318,8 @@ cleanup:
 void ofono_wan_set_configuration(struct wan_service *service, struct wan_configuration *configuration,
 									   wan_result_cb cb, void *data)
 {
-	struct ofono_wan_data *od = wan_service_get_data(service);
+	g_message("Herrie ofono_wan_set_configuration");
+    struct ofono_wan_data *od = wan_service_get_data(service);
 	struct cb_data *cbd = NULL;
 	struct wan_error error;
 
@@ -348,7 +356,8 @@ void ofono_wan_set_configuration(struct wan_service *service, struct wan_configu
 
 static void get_status_cb(const struct wan_error *error, struct wan_status *status, void *data)
 {
-	struct ofono_wan_data *od = data;
+	g_message("Herrie get_status_cb");
+    struct ofono_wan_data *od = data;
 
 	od->status_update_pending = false;
 
@@ -359,7 +368,8 @@ static void get_status_cb(const struct wan_error *error, struct wan_status *stat
 
 static void send_status_update_cb(void *data)
 {
-	struct ofono_wan_data *od = data;
+	g_message("Herrie send_status_update_cb");
+    struct ofono_wan_data *od = data;
 
 	if (!od->status_update_pending) {
 		od->status_update_pending = true;
@@ -369,22 +379,26 @@ static void send_status_update_cb(void *data)
 
 static void manager_property_changed_cb(const gchar *name, void *data)
 {
-	send_status_update_cb(data);
+	g_message("Herrie manager_property_changed_cb");
+    send_status_update_cb(data);
 }
 
 static void context_prop_changed_cb(const char *name, void *data)
 {
-	send_status_update_cb(data);
+	g_message("Herrie context_prop_changed_cb");
+    send_status_update_cb(data);
 }
 
 static void network_prop_changed_cb(const gchar *name, void *data)
 {
-	send_status_update_cb(data);
+	g_message("Herrie network_prop_changed_cb");
+    send_status_update_cb(data);
 }
 
 static void modem_prop_changed_cb(const gchar *name, void *data)
 {
-	struct ofono_wan_data *od = data;
+	g_message("Herrie modem_prop_changed_cb");
+    struct ofono_wan_data *od = data;
 	const char *path = ofono_modem_get_path(od->modem);
 
 	if (g_str_equal(name, "Interfaces")) {
@@ -411,12 +425,14 @@ static void modem_prop_changed_cb(const gchar *name, void *data)
 
 static void modems_changed_cb(gpointer user_data)
 {
+    g_message("Herrie modem_changed_cb");
 	struct ofono_wan_data *data = user_data;
 	const GList *modems = NULL;
 
 	modems = ofono_manager_get_modems(data->manager);
 
-	/* select first modem from the list as default for now */
+	/* FIXME for multi-sim? */
+    /* select first modem from the list as default for now */
 	if (modems) {
 		ofono_modem_ref(modems->data);
 		data->modem = modems->data;
@@ -434,7 +450,8 @@ static void modems_changed_cb(gpointer user_data)
 static void service_appeared_cb(GDBusConnection *conn, const gchar *name, const gchar *name_owner,
 								gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie modem_changed_cb");
+    struct ofono_wan_data *od = user_data;
 
 	g_message("ofono dbus service available");
 
@@ -447,7 +464,8 @@ static void service_appeared_cb(GDBusConnection *conn, const gchar *name, const 
 
 static void service_vanished_cb(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie service_vanished_cb");
+    struct ofono_wan_data *od = user_data;
 
 	g_message("ofono dbus service disappeared");
 
@@ -456,7 +474,8 @@ static void service_vanished_cb(GDBusConnection *conn, const gchar *name, gpoint
 
 static void handle_current_service_property(struct ofono_wan_data *od, const gchar *name, GVariant *value)
 {
-	GVariant *state_v = 0;
+	g_message("Herrie handle_current_service_property");
+    GVariant *state_v = 0;
 	const gchar *state = 0;
 	gboolean wan_disable_before = od->wan_disabled;
 
@@ -479,7 +498,8 @@ static void handle_current_service_property(struct ofono_wan_data *od, const gch
 static void current_service_signal_cb(GDBusProxy *proxy, gchar *sender_name, gchar *signal_name,
 									  GVariant *parameters, gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie current_service_signal_cb");
+    struct ofono_wan_data *od = user_data;
 	GVariant *prop_name = 0, *prop_value = 0;
 	const gchar *name = 0;
 
@@ -498,7 +518,8 @@ static void current_service_signal_cb(GDBusProxy *proxy, gchar *sender_name, gch
 
 static void cellular_service_setup_cb(const struct wan_error* error, void *data)
 {
-	if (error) {
+	g_message("Herrie cellular_service_setup_cb");
+    if (error) {
 		g_message("[WAN] Failed to connect to cellular service");
 		return;
 	}
@@ -508,7 +529,8 @@ static void cellular_service_setup_cb(const struct wan_error* error, void *data)
 
 static void assign_current_cellular_service(struct ofono_wan_data *od, const gchar *path, GVariant *properties)
 {
-	GVariant *property = 0, *prop_name = 0, *prop_value = 0;
+	g_message("Herrie assign_current_cellular_service");
+    GVariant *property = 0, *prop_name = 0, *prop_value = 0;
 	gsize n = 0;
 	const gchar *name = 0;
 	bool favorite = false;
@@ -567,7 +589,8 @@ static void assign_current_cellular_service(struct ofono_wan_data *od, const gch
 
 static void update_from_service_list(struct ofono_wan_data *od, GVariant *service_list)
 {
-	GVariant *service = 0, *object_path = 0, *properties = 0;
+	g_message("Herrie update_from_service_list");
+    GVariant *service = 0, *object_path = 0, *properties = 0;
 	const gchar *path = 0;
 	gboolean found = FALSE;
 	gsize n = 0;
@@ -606,7 +629,8 @@ static void update_from_service_list(struct ofono_wan_data *od, GVariant *servic
 
 static void update_from_changed_services(struct ofono_wan_data *od, GVariant *parameters)
 {
-	GVariant *services_added = 0;
+	g_message("Herrie update_from_changed_services");
+    GVariant *services_added = 0;
 	GVariant *services_removed = 0;
 	gsize n = 0;
 	gboolean done = FALSE;
@@ -649,7 +673,8 @@ static void update_from_changed_services(struct ofono_wan_data *od, GVariant *pa
 static void services_changed_cb(GDBusProxy *proxy, gchar *sender_name, gchar *signal_name,
 									  GVariant *parameters, gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie services_changed_cb");
+    struct ofono_wan_data *od = user_data;
 
 	if (g_strcmp0(signal_name, "ServicesChanged") != 0)
 		return;
@@ -659,7 +684,8 @@ static void services_changed_cb(GDBusProxy *proxy, gchar *sender_name, gchar *si
 
 static void connman_manager_get_services_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie connman_manager_get_services_cb");
+    struct ofono_wan_data *od = user_data;
 	GError *error = 0;
 	GVariant *service_list = 0, *response = 0;
 
@@ -679,7 +705,8 @@ static void connman_manager_get_services_cb(GObject *source, GAsyncResult *res, 
 
 static void connman_manager_proxy_connect_cb(GObject *source, GAsyncResult *res, gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie connman_manager_proxy_connect_cb");
+    struct ofono_wan_data *od = user_data;
 	GError *error = 0;
 
 	od->connman_manager_proxy = g_dbus_proxy_new_finish(res, &error);
@@ -700,7 +727,8 @@ static void connman_manager_proxy_connect_cb(GObject *source, GAsyncResult *res,
 static void connman_appeared_cb(GDBusConnection *conn, const gchar *name, const gchar *name_owner,
 								gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie connman_appeared_cb");
+    struct ofono_wan_data *od = user_data;
 
 	g_message("connman dbus service available");
 
@@ -713,7 +741,8 @@ static void connman_appeared_cb(GDBusConnection *conn, const gchar *name, const 
 
 static void connman_vanished_cb(GDBusConnection *conn, const gchar *name, gpointer user_data)
 {
-	struct ofono_wan_data *od = user_data;
+	g_message("Herrie connman_vanished_cb");
+    struct ofono_wan_data *od = user_data;
 
 	g_message("connman dbus service disappeared");
 
@@ -725,7 +754,8 @@ static void connman_vanished_cb(GDBusConnection *conn, const gchar *name, gpoint
 
 int ofono_wan_probe(struct wan_service *service)
 {
-	struct ofono_wan_data *data;
+	g_message("Herrie ofono_wan_probe");
+    struct ofono_wan_data *data;
 
 	data = g_try_new0(struct ofono_wan_data, 1);
 	if (!data)
@@ -745,7 +775,8 @@ int ofono_wan_probe(struct wan_service *service)
 
 void ofono_wan_remove(struct wan_service *service)
 {
-	struct ofono_wan_data *data;
+	g_message("Herrie ofono_wan_remove");
+    struct ofono_wan_data *data;
 
 	data = wan_service_get_data(service);
 
