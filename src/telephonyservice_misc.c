@@ -431,7 +431,7 @@ bool _service_device_lock_query_cb(LSHandle *handle, LSMessage *message, void *u
 		jobject_put(reply_obj, J_CSTR_TO_JVAL("errorText"), jstring_create("success"));
 	}
 
-	/* FIXME we don't really now which properties are part of the extended object */
+	/* FIXME we don't really know which properties are part of the extended object */
 
 	jobject_put(reply_obj, J_CSTR_TO_JVAL("extended"), extended_obj);
 	jobject_put(reply_obj, J_CSTR_TO_JVAL("subscribed"), jboolean_create(subscribed));
@@ -479,7 +479,7 @@ bool _service_charge_source_query_cb(LSHandle *handle, LSMessage *message, void 
 }
 
 /**
- * @brief Check wether telephony service is ready
+ * @brief Check whether telephony service is ready
  **/
 
 bool _service_is_telephony_ready_cb(LSHandle *handle, LSMessage *message, void *user_data)

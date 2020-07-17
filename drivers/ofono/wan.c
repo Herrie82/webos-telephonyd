@@ -571,12 +571,16 @@ static void update_from_service_list(struct ofono_wan_data *od, GVariant *servic
 	const gchar *path = 0;
 	gboolean found = FALSE;
 	gsize n = 0;
-
-	for (n = 0; n < g_variant_n_children(service_list); n++) {
-		service = g_variant_get_child_value(service_list, n);
-		object_path = g_variant_get_child_value(service, 0);
-		properties = g_variant_get_child_value(service, 1);
-		path = g_variant_get_string(object_path, NULL);
+    
+    for (n = 0; n < g_variant_n_children(service_list); n++) {
+	    service = g_variant_get_child_value(service_list, n);
+		g_message("Herrie service %s", service);
+        object_path = g_variant_get_child_value(service, 0);
+		g_message("Herrie object_path %s", object_path);
+        properties = g_variant_get_child_value(service, 1);
+		g_message("Herrie properties %s", properties);
+        path = g_variant_get_string(object_path, NULL);
+        g_message("Herrie path %s", path);
 
 		if (g_strrstr(path, "cellular") != 0) {
 			g_message("[WAN] Found a cellular service %s", path);
