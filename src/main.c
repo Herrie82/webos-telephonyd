@@ -29,7 +29,6 @@
 #include <glib-object.h>
 
 #include "telephonyservice.h"
-#include "wanservice.h"
 
 #define SHUTDOWN_GRACE_SECONDS		0
 #define VERSION						"0.1"
@@ -142,7 +141,7 @@ int main(int argc, char **argv)
 	GError *err = NULL;
 	guint signal;
 	struct telephony_service *telservice;
-	struct wan_service *wanservice;
+	//struct wan_service *wanservice;
 
 	g_type_init();
 
@@ -185,7 +184,7 @@ int main(int argc, char **argv)
 	ofono_init();
 
 	telservice = telephony_service_create();
-	wanservice = wan_service_create();
+	//wanservice = wan_service_create();
 
 	if(telservice && wanservice) {
 		g_main_loop_run(event_loop);
@@ -193,8 +192,8 @@ int main(int argc, char **argv)
 
 	g_message("Cleaning up");
 
-	if(wanservice)
-		wan_service_free(wanservice);
+	//if(wanservice)
+	//	wan_service_free(wanservice);
 	if(telservice)
 		telephony_service_free(telservice);
 

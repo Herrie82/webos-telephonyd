@@ -6,13 +6,5 @@
     "com.webos.service.telephony": [
         "database.internal",
         "activities.manage"
-    ],
-    "com.palm.wan": [
-        "database.internal",
-        "activities.manage"
-    ],
-    "com.webos.service.wan": [
-        "database.internal",
-        "activities.manage"
     ]
 }

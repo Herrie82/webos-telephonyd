@@ -17,24 +17,24 @@
 * LICENSE@@@ */
 
 extern struct telephony_driver ofono_telephony_driver;
-extern struct wan_driver ofono_wan_driver;
+//extern struct wan_driver ofono_wan_driver;
 
 #include <glib.h>
 #include <errno.h>
 #include <string.h>
 
-#include "wanservice.h"
+//#include "wanservice.h"
 #include "telephonyservice.h"
 
 void ofono_init(void)
 {
 	telephony_driver_register(&ofono_telephony_driver);
-	wan_driver_register(&ofono_wan_driver);
+	//wan_driver_register(&ofono_wan_driver);
 }
 
 void ofono_exit(void)
 {
-	wan_driver_unregister(&ofono_wan_driver);
+	//wan_driver_unregister(&ofono_wan_driver);
 	telephony_driver_unregister(&ofono_telephony_driver);
 }
 
