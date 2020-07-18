@@ -29,6 +29,7 @@
 #include <glib-object.h>
 
 #include "telephonyservice.h"
+#include <webos-connman-adapter/wan_service.h>
 
 #define SHUTDOWN_GRACE_SECONDS		0
 #define VERSION						"0.1"
