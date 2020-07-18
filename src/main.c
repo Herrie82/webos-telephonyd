@@ -186,7 +186,8 @@ int main(int argc, char **argv)
 	telservice = telephony_service_create();
 	//wanservice = wan_service_create();
 
-	if(telservice && wanservice) {
+	//if(telservice && wanservice) {
+    if(telservice) {
 		g_main_loop_run(event_loop);
 	}
 

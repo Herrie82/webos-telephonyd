@@ -22,7 +22,7 @@
 
 #include "utils.h"
 
-#include "wanservice.h"
+//#include "wanservice.h"
 #include "wandriver.h"
 
 #include "ofonobase.h"
@@ -36,7 +36,7 @@
 	((flags & flag) == flag)
 
 struct ofono_wan_data {
-	struct wan_service *service;
+	//struct wan_service *service;
 	guint service_watch;
 	struct ofono_manager *manager;
 	struct ofono_modem *modem;
@@ -190,7 +190,7 @@ static void get_contexts_cb(const struct ofono_error *error, GSList *contexts, v
 	struct ofono_wan_data *od = cbd->user;
 	struct wan_status status;
 	struct ofono_connection_context *context;
-	struct wan_connected_service *wanservice;
+	//struct wan_connected_service *wanservice;
 	GSList *iter;
 
 	memset(&status, 0, sizeof(struct wan_status));
@@ -221,31 +221,31 @@ static void get_contexts_cb(const struct ofono_error *error, GSList *contexts, v
 
 		ofono_connection_context_register_prop_changed_cb(context, context_prop_changed_cb, od);
 
-		wanservice = g_new0(struct wan_connected_service, 1);
+		//wanservice = g_new0(struct wan_connected_service, 1);
 
 		switch (ofono_connection_context_get_type(context)) {
 		case OFONO_CONNECTION_CONTEXT_TYPE_INTERNET:
-			wanservice->services[WAN_SERVICE_TYPE_INTERNET] = true;
+			//wanservice->services[WAN_SERVICE_TYPE_INTERNET] = true;
 			break;
 		case OFONO_CONNECTION_CONTEXT_TYPE_MMS:
-			wanservice->services[WAN_SERVICE_TYPE_MMS] = true;
+			//wanservice->services[WAN_SERVICE_TYPE_MMS] = true;
 			break;
 		default:
 			break;
 		}
 
-		wanservice->ipaddress = ofono_connection_context_get_address(context);
-		wanservice->connection_status = ofono_connection_context_get_active(context) ?
-					WAN_CONNECTION_STATUS_ACTIVE : WAN_CONNECTION_STATUS_DISCONNECTED;
+		//wanservice->ipaddress = ofono_connection_context_get_address(context);
+		//wanservice->connection_status = ofono_connection_context_get_active(context) ?
+		//			WAN_CONNECTION_STATUS_ACTIVE : WAN_CONNECTION_STATUS_DISCONNECTED;
 
 		/* FIXME to what we have to set the following field? */
-		wanservice->req_status = WAN_REQUEST_STATUS_CONNECT_SUCCEEDED;
+		//wanservice->req_status = WAN_REQUEST_STATUS_CONNECT_SUCCEEDED;
 
 		/* If at least one service is active we report a active connection */
-		if (wanservice->connection_status == WAN_CONNECTION_STATUS_ACTIVE)
-			status.connection_status = WAN_CONNECTION_STATUS_ACTIVE;
+		//if (wanservice->connection_status == WAN_CONNECTION_STATUS_ACTIVE)
+	//		status.connection_status = WAN_CONNECTION_STATUS_ACTIVE;
 
-		status.connected_services = g_slist_append(status.connected_services, wanservice);
+		//status.connected_services = g_slist_append(status.connected_services, wanservice);
 	}
 
 	cb(NULL, &status, cbd->data);
@@ -257,14 +257,14 @@ static void get_contexts_cb(const struct ofono_error *error, GSList *contexts, v
 void ofono_wan_get_status(struct wan_service *service, wan_get_status_cb cb, void *data)
 {
     g_message("Herrie ofono_wan_get_status");
-	struct ofono_wan_data *od = wan_service_get_data(service);
+	//struct ofono_wan_data *od = wan_service_get_data(service);
 	struct cb_data *cbd = NULL;
 
 	cbd = cb_data_new(cb, data);
-	cbd->user = od;
+	//cbd->user = od;
 
 	/* we need to retrieve all available connection contexts first */
-	ofono_connection_manager_get_contexts(od->cm, get_contexts_cb, cbd);
+	//ofono_connection_manager_get_contexts(od->cm, get_contexts_cb, cbd);
 }
 
 static void roamguard_set_cb(const struct wan_error* error, void *data)
@@ -319,35 +319,35 @@ void ofono_wan_set_configuration(struct wan_service *service, struct wan_configu
 									   wan_result_cb cb, void *data)
 {
 	g_message("Herrie ofono_wan_set_configuration");
-    struct ofono_wan_data *od = wan_service_get_data(service);
+    //struct ofono_wan_data *od = wan_service_get_data(service);
 	struct cb_data *cbd = NULL;
 	struct wan_error error;
 
-	if (!od->current_service_path) {
+	/*if (!od->current_service_path) {
 		error.code = WAN_ERROR_NOT_AVAILABLE;
 		cb(&error, data);
 		return;
 	}
 
 	od->pending_configuration = configuration;
-
+*/
 	if (is_flag_set(configuration->flags, WAN_CONFIGURATION_TYPE_DISABLEWAN)) {
-		if (configuration->disablewan != od->wan_disabled) {
+		/*if (configuration->disablewan != od->wan_disabled) {
 			cbd = cb_data_new(cb, data);
 			cbd->user = od;
 
 			switch_current_service_state(od, !configuration->disablewan,
 										 disablewan_set_cb, cbd);
-		}
+		}*/
 	}
 	else if (is_flag_set(configuration->flags, WAN_CONFIGURATION_TYPE_ROAMGUARD)) {
-		if (configuration->roamguard == ofono_connection_manager_get_roaming_allowed(od->cm)) {
+		/*if (configuration->roamguard == ofono_connection_manager_get_roaming_allowed(od->cm)) {
 			cbd = cb_data_new(cb, data);
 			cbd->user = od;
 
 			ofono_connection_manager_set_roaming_allowed(od->cm, !configuration->roamguard,
 														 roamguard_set_cb, cbd);
-		}
+		}*/
 	}
 	else {
 		cb (NULL, data);
@@ -362,7 +362,7 @@ static void get_status_cb(const struct wan_error *error, struct wan_status *stat
 	od->status_update_pending = false;
 
 	if (!error) {
-		wan_service_status_changed_notify(od->service, status);
+		//wan_service_status_changed_notify(od->service, status);
 	}
 }
 
@@ -373,7 +373,7 @@ static void send_status_update_cb(void *data)
 
 	if (!od->status_update_pending) {
 		od->status_update_pending = true;
-		ofono_wan_get_status(od->service, get_status_cb, od);
+		//ofono_wan_get_status(od->service, get_status_cb, od);
 	}
 }
 
@@ -761,8 +761,8 @@ int ofono_wan_probe(struct wan_service *service)
 	if (!data)
 		return -ENOMEM;
 
-	wan_service_set_data(service, data);
-	data->service = service;
+	//wan_service_set_data(service, data);
+	//data->service = service;
 
 	data->service_watch = g_bus_watch_name(G_BUS_TYPE_SYSTEM, "org.ofono", G_BUS_NAME_WATCHER_FLAGS_NONE,
 					 service_appeared_cb, service_vanished_cb, data, NULL);
@@ -778,7 +778,7 @@ void ofono_wan_remove(struct wan_service *service)
 	g_message("Herrie ofono_wan_remove");
     struct ofono_wan_data *data;
 
-	data = wan_service_get_data(service);
+	//data = wan_service_get_data(service);
 
 	g_bus_unwatch_name(data->service_watch);
 
@@ -786,7 +786,7 @@ void ofono_wan_remove(struct wan_service *service)
 
 	g_free(data);
 
-	wan_service_set_data(service, NULL);
+	//wan_service_set_data(service, NULL);
 }
 
 struct wan_driver ofono_wan_driver = {
